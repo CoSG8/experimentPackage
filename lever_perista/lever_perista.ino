@@ -1,19 +1,25 @@
 /*
   lever_perista.ino
-  Programmed by Akito Kosugi
+  Akito Kosugi
+  ver.1.2 2019.11.12
  
 */
 
 #define LorR    0                // L/RはANALOG IN A0に接続
-#define pumpPin 3
-#define ledPin  13                // LEDはDEGITAL OUT13に接続
 #define spkPin  2                // スピーカーはDEGITAL OUT2に接続
+#define spkPin2 3                // スピーカーはDEGITAL OUT2に接続
+#define pumpPin 4
+
+#define ledPin  13                // LEDはDEGITAL OUT13に接続
+
 
 // 変更するパラメータ
 int leverTh = 1000;               // valueが一定時間この値以下だとレバー引いていると判断
 int homeTh = 500;  
 int holdTimeTh =  200;            // 必要な保持時間 [ms]
-int successTimeTh = 500; 
+int successTimeTh = 300; 
+int toneTimeTh1 = 150;
+int toneTimeTh2 = 250;
 int startTimeTh = 3000; 
 int Fs = 100;                     // サンプリングレート [Hz]
 
@@ -41,6 +47,7 @@ void setup() {
 
   pinMode(LorR, INPUT);
   pinMode(spkPin, OUTPUT);
+  pinMode(spkPin2, OUTPUT);
   pinMode(pumpPin, OUTPUT);
   pinMode(ledPin, OUTPUT);
   Serial.begin(57600);
@@ -113,16 +120,23 @@ void loop() {
   if (isHold_start) {
     trialNum +=1;
     holdStartTime = runTime;
-    tone(spkPin, 1500, 200);
+    tone(spkPin, 987, toneTimeTh1);
     isHold_start = false;
   }
 
   // レバーを保持していたら音がなりLEDが光る
   if (isHold) {
-    isSuccess = true;
-    isTaskReady = false;
     successTime = runTime - holdStartTime;
-    if(successTime > successTimeTh) {
+    if(successTime > toneTimeTh1){
+      tone(spkPin, 1318, toneTimeTh2);
+      digitalWrite(spkPin2, HIGH);
+    }
+    if(successTime > toneTimeTh1 + toneTimeTh2){
+      digitalWrite(spkPin2, LOW);
+      isSuccess = true;
+      isTaskReady = false;
+    }
+    if(successTime > successTimeTh+toneTimeTh1 + toneTimeTh2){
       isHold = false;
       isSuccess = false;
     }
@@ -183,4 +197,3 @@ void loop() {
   isHold_pre = isHold;
   delay(1000 / Fs);
 }
-
