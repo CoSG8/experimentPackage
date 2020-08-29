@@ -1,11 +1,12 @@
 /*
   Programmed by Akito Kosugi
-  ver. 2.2  2020.07.16
+  ver. 2.3  2020.08.13
 */
 
 #define spkPin  2                // スピーカーはDEGITAL OUT2に接続
 #define buttonPin  3
-#define ledPin  5
+#define ledPin1  5
+#define ledPin2  6
   
 int toneTimeTh1 = 150;
 int toneTimeTh2 =400;
@@ -27,7 +28,8 @@ bool isSuccess = false;
 void setup() {
   pinMode(buttonPin, INPUT);
   pinMode(spkPin, OUTPUT);
-  pinMode(ledPin, OUTPUT);
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
   Serial.begin(9600);
   
   isTaskReady = true;  
@@ -60,17 +62,20 @@ void loop() {
 
   // LED
   if(isTask == true){
-    digitalWrite(ledPin, HIGH);
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
     if(runTime>taskStartTime+taskTimeTh){
       isTask = false;
-      digitalWrite(ledPin, LOW);
+      digitalWrite(ledPin1, LOW);
+      digitalWrite(ledPin2, LOW);
     }
   }
   if(isSuccess == true){
     if(runTime>successStartTime+toneTimeTh1+toneTimeTh2){
       isSuccess = false;
       isTask = false;
-      digitalWrite(ledPin, LOW);
+      digitalWrite(ledPin1, LOW);
+      digitalWrite(ledPin2, LOW);
     }    
   }
 
@@ -78,7 +83,6 @@ void loop() {
     if(runTime > taskStartTime+ iti){
       isTaskReady = true;
     }
-
     
   }
   //シリアルモニターに表示
