@@ -1,6 +1,6 @@
 /*
  Programed by Akito Kosugi
- ver 1.0 03.10.2026
+ ver 1.0.1 03.17.2026
 */ 
 #include <M5Stack.h>
 #include <time.h>
@@ -8,15 +8,15 @@
 int checkIdx(void);
 void writeData(char *filename, char *buffStr);
 
-#define pin_ai     36
-#define pin_dio    16
-#define pin_switch 26
+#define pin_ai  36
+#define pin_do  16
+#define pin_di  26
 
 bool bSwitchOn;
 int count = 0;
 int readData;
 int readData_prev;
-int th = 2260;
+int th = 2300;
 float startTime; 
 float time_from_start;
 const long delay_ms = 10;
@@ -29,9 +29,9 @@ void trig_on(int on_time){
   M5.Lcd.fillRect(10, 200, 150, 30, BLACK);
   M5.Lcd.println("Trig ON");
   count += 1;
-  digitalWrite(pin_dio,HIGH);
+  digitalWrite(pin_do,HIGH);
   delay(on_time);
-  digitalWrite(pin_dio,LOW);
+  digitalWrite(pin_do,LOW);
   M5.Lcd.setCursor(10, 200);
   M5.Lcd.fillRect(10, 200, 150, 30, BLACK);
 }
@@ -40,16 +40,16 @@ void setup() {
   
   //Initialization
   M5.begin();
-  pinMode(pin_dio, OUTPUT);
+  pinMode(pin_do, OUTPUT);
   pinMode(pin_ai, INPUT);
-  pinMode(pin_switch, INPUT_PULLUP);
+  pinMode(pin_di, INPUT_PULLUP);
 
   //Display
   M5.Lcd.clear(BLACK);
   M5.Lcd.setTextSize(2);
   M5.Lcd.setTextColor(YELLOW);
   M5.Lcd.setCursor(40,10);
-  M5.Lcd.print("M5Stack analog input");
+  M5.Lcd.print("M5Stack GRF trigger");
   M5.Lcd.setCursor(0,70);
   M5.Lcd.print("Value:");  
   M5.Lcd.setCursor(0,100);
@@ -71,7 +71,7 @@ void loop(){
 
   //Data aquisition
   readData = analogRead(pin_ai);
-  bSwitchOn = digitalRead(pin_switch);
+  bSwitchOn = digitalRead(pin_di);
   time_from_start = (millis()-startTime)/1000;
   
   //TTL output
